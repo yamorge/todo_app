@@ -3,4 +3,6 @@
     <string name="to_do">To-do</string>
     <string name="everyday_tasks">Everyday tasks</string>
     <string name="statistics">Statistics</string>
+    <string name="delete_task">DELETE TASK</string>
+    <string name="add_task">ADD TASK</string>
 </resources>

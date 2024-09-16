@@ -1,5 +1,6 @@
 package com.example.todoapp
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import com.example.todoapp.db.TaskDatabase
 import com.example.todoapp.db.TaskRecycleViewAdapter
 import com.example.todoapp.db.TaskViewModel
 import com.example.todoapp.db.TaskViewModelFactory
+import kotlinx.coroutines.selects.select
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -36,6 +38,9 @@ class TodoFragment : Fragment() {
     private lateinit var binding: FragmentTodoBinding
     private lateinit var viewModel: TaskViewModel
     private lateinit var adapter: TaskRecycleViewAdapter
+
+    private var isListItemClicked = false
+    private lateinit var selectedTask: Task
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,14 +60,25 @@ class TodoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initRecyclerView()
         // Теперь вы можете использовать binding для доступа к элементам интерфейса
         binding.btnAddTask.setOnClickListener {
-            val text = binding.etAddTask.text
-            addTask(text.toString())
-            initRecyclerView()
+            if (isListItemClicked == false) {
+                val text = binding.etAddTask.text
+                addTask(text.toString())
+
+            }
+            else{
+                deleteTask()
+            }
         }
         // Другие операции с элементами интерфейса
+
+        // Снимаем фокус с задачи при нажатии на бэкграунд
+        binding.root.setOnClickListener {
+            unfocus()
+        }
+
     }
 
     private fun addTask(text: String){ // изменить потом
@@ -75,11 +91,23 @@ class TodoFragment : Fragment() {
         )
     }
 
-    private fun initRecyclerView(){
+    private fun deleteTask(){
+        viewModel.deleteTask(Task(
+            selectedTask.id,
+            selectedTask.name,
+            selectedTask.type
+        ))
+        unfocus() // таким образом фокус не застревает на удаленной задаче
+    }
+
+    private fun initRecyclerView(){ // Вызывается лишь однажды, инициализирует RecyclerView
 
         val taskRV = binding.rvTasks
         taskRV.layoutManager = LinearLayoutManager(requireContext())
-        adapter = TaskRecycleViewAdapter()
+       // Вызывается каждый раз при клике и обновляется соответственно в дисплейтасклист
+        adapter = TaskRecycleViewAdapter{
+            selectedItem: Task -> listItemClicked(selectedItem)
+        }
         taskRV.adapter = adapter
 
         displayTasksList() // разделяем логику на разные функции
@@ -92,5 +120,14 @@ class TodoFragment : Fragment() {
         })
     }
 
+    private fun listItemClicked(task: Task){
+        selectedTask = task
+        isListItemClicked = true
+    }
+
+    private fun unfocus(){
+        adapter.selectedTask = null
+        adapter.notifyDataSetChanged() // поменять после теста!
+    }
 
 }
