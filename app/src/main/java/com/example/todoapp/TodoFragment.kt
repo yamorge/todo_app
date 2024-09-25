@@ -1,26 +1,22 @@
 package com.example.todoapp
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.compose.ui.window.application
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.todoapp.R
+import com.example.todoapp.complete_db.CompleteTask
 import com.example.todoapp.databinding.FragmentTodoBinding
+import com.example.todoapp.complete_db.CompleteTaskDatabase
+import com.example.todoapp.complete_db.CompleteTaskViewModel
+import com.example.todoapp.complete_db.CompleteTaskViewModelFactory
 import com.example.todoapp.db.Task
 import com.example.todoapp.db.TaskDatabase
 import com.example.todoapp.db.TaskRecycleViewAdapter
 import com.example.todoapp.db.TaskViewModel
 import com.example.todoapp.db.TaskViewModelFactory
-import kotlinx.coroutines.selects.select
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -33,10 +29,11 @@ private const val ARG_PARAM2 = "param2"
  * Use the [TodoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TodoFragment : Fragment() {
+class TodoFragment : Fragment(), TaskInteractionListener {
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var viewModel: TaskViewModel
+    private lateinit var completeViewModel: CompleteTaskViewModel
     private lateinit var adapter: TaskRecycleViewAdapter
 
     private var isListItemClicked = false
@@ -48,6 +45,10 @@ class TodoFragment : Fragment() {
         val dao = TaskDatabase.getInstance(requireActivity().application).taskDao()
         val factory = TaskViewModelFactory(dao)
         viewModel = ViewModelProvider(requireActivity(), factory).get(TaskViewModel::class.java)
+
+        val completeDao = CompleteTaskDatabase.getInstance(requireActivity().application).completeTaskDao()
+        val completeFactory = CompleteTaskViewModelFactory(completeDao)
+        completeViewModel = ViewModelProvider(requireActivity(), completeFactory).get(CompleteTaskViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -61,12 +62,10 @@ class TodoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        // Теперь вы можете использовать binding для доступа к элементам интерфейса
+
         binding.btnAddTask.setOnClickListener {
             if (isListItemClicked == false) {
-                val text = binding.etAddTask.text
-                addTask(text.toString())
-
+                replaceFragment()
             }
             else{
                 deleteTask()
@@ -79,17 +78,11 @@ class TodoFragment : Fragment() {
             unfocus()
         }
 
+
+
     }
 
-    private fun addTask(text: String){ // изменить потом
-        viewModel.insertTask(
-            Task(
-                0,
-                text,
-                "sport"
-            )
-        )
-    }
+
 
     private fun deleteTask(){
         viewModel.deleteTask(Task(
@@ -104,8 +97,8 @@ class TodoFragment : Fragment() {
 
         val taskRV = binding.rvTasks
         taskRV.layoutManager = LinearLayoutManager(requireContext())
-       // Вызывается каждый раз при клике и обновляется соответственно в дисплейтасклист
-        adapter = TaskRecycleViewAdapter{
+       // Вызывается каждый раз при клике и обновляется соответственно в displayTaskList
+        adapter = TaskRecycleViewAdapter(this){ // передаем слушатель интерфейса и кликлистенер
             selectedItem: Task -> listItemClicked(selectedItem)
         }
         taskRV.adapter = adapter
@@ -123,11 +116,45 @@ class TodoFragment : Fragment() {
     private fun listItemClicked(task: Task){
         selectedTask = task
         isListItemClicked = true
+        binding.btnAddTask.text = getString(R.string.delete_task) // Всякий раз, когда задача выбирается, меняем кнопку
     }
 
-    private fun unfocus(){
+   override fun unfocus(){
         adapter.selectedTask = null
-        adapter.notifyDataSetChanged() // поменять после теста!
+        isListItemClicked = false
+       adapter.notifyDataSetChanged() // поменять после теста!
+       binding.btnAddTask.text = getString(R.string.add_task) // Меняем кнопку назад, всякий раз, когда не выбрана задача
+
+   }
+
+    override fun completeTask(selectedTask: Task?){
+        if (selectedTask != null) {
+            completeViewModel.insertTask(
+                CompleteTask(
+                    selectedTask.id,
+                    selectedTask.name,
+                    selectedTask.type
+                )
+            )
+
+            viewModel.deleteTask(
+                Task(
+                    selectedTask.id,
+                    selectedTask.name,
+                    selectedTask.type
+                )
+            )
+            unfocus()
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun replaceFragment(){
+        val addTaskFragment = AddTaskFragment()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.flFragment, addTaskFragment)
+            .addToBackStack(null) // позволяет при нажатии назад вернуться в предыдущий фрагмент
+            .commit()
     }
 
 }

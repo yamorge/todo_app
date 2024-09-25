@@ -21,3 +21,4 @@ interface TaskDao {
     fun getAllTasks(): LiveData<List<Task>>
 
 }
+

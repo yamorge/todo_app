@@ -7,12 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.databinding.ActivityMainBinding
-import com.example.todoapp.db.TaskDatabase
-import com.example.todoapp.db.TaskViewModel
-import com.example.todoapp.db.TaskViewModelFactory
 
 
 class MainActivity : AppCompatActivity() {
@@ -58,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     private fun replaceFragment(fragment: Fragment){
         val fragmentManager: FragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frameLayout, fragment)
+        fragmentTransaction.replace(R.id.flFragment, fragment)
         fragmentTransaction.commit()
     }
 

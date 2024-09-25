@@ -5,4 +5,12 @@
     <string name="statistics">Statistics</string>
     <string name="delete_task">DELETE TASK</string>
     <string name="add_task">ADD TASK</string>
+    <string name="enter_your_task">Enter your task</string>
+    <string name="studying">Studying</string>
+    <string name="sport">Sport</string>
+    <string name="social">Social</string>
+    <string name="hobbies">Hobbies</string>
+    <string name="choose_the_type">Choose the type of your task</string>
+    <string name="submit">SUBMIT</string>
+    <string name="customize_your_task">CUSTOMIZE YOUR TASK</string>
 </resources>
