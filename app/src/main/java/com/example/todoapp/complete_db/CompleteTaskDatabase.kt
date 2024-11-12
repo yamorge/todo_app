@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.todoapp.complete_db.CompleteTask
 import com.example.todoapp.complete_db.CompleteTaskDao
 
-@Database(entities = [CompleteTask::class], version = 1, exportSchema = false)
+@Database(entities = [CompleteTask::class], version = 2, exportSchema = false)
 abstract class CompleteTaskDatabase: RoomDatabase(){
 
     abstract fun completeTaskDao(): CompleteTaskDao

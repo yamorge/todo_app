@@ -10,7 +10,10 @@
     <string name="sport">Sport</string>
     <string name="social">Social</string>
     <string name="hobbies">Hobbies</string>
-    <string name="choose_the_type">Choose the type of your task</string>
+    <string name="choose_the_type">Choose the type of your task:</string>
     <string name="submit">SUBMIT</string>
-    <string name="customize_your_task">CUSTOMIZE YOUR TASK</string>
+    <string name="customize_your_task">ADDING TASK</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>

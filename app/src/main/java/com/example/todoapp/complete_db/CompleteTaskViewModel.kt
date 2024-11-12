@@ -10,6 +10,7 @@ class CompleteTaskViewModel(private val dao: CompleteTaskDao): ViewModel() {
 
     val tasks = dao.getAllTasks()
 
+
     fun insertTask(task: CompleteTask)=viewModelScope.launch { // ViewModelScope вызывает CoroutineScope, а значит выполняет функции на фоне
         dao.insertTask(task)
     }
@@ -20,6 +21,18 @@ class CompleteTaskViewModel(private val dao: CompleteTaskDao): ViewModel() {
 
     fun deleteTask(task: CompleteTask)=viewModelScope.launch {
         dao.deleteTask(task)
+    }
+
+    suspend fun getTypeCounts(): List<TypeCount> {
+        return dao.getTypeCounts() // мб поменять логику через репозиторий
+    }
+
+    suspend fun getTypeCountsForYear(year: Int): List<TypeCount> {
+        return dao.getTypeCountsForYear(year) // мб поменять логику через репозиторий
+    }
+
+    suspend fun getTypeCountsForMonth(year: Int, month: Int): List<TypeCount> {
+        return dao.getTypeCountsForMonth(year, month) // мб поменять логику через репозиторий
     }
 
 }

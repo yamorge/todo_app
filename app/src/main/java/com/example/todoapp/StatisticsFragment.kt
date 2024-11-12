@@ -1,11 +1,29 @@
 package com.example.todoapp
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.R
+import com.example.todoapp.complete_db.CompleteTaskDatabase
+import com.example.todoapp.complete_db.CompleteTaskViewModel
+import com.example.todoapp.complete_db.CompleteTaskViewModelFactory
+import com.example.todoapp.databinding.FragmentStatisticsBinding
+import com.example.todoapp.databinding.FragmentTodoBinding
+import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.utils.ColorTemplate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,24 +36,110 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class StatisticsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentStatisticsBinding
+    private lateinit var pieChart: PieChart
+    private lateinit var completeViewModel: CompleteTaskViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
+        val completeDao = CompleteTaskDatabase.getInstance(requireActivity().application).completeTaskDao()
+        val completeFactory = CompleteTaskViewModelFactory(completeDao)
+        completeViewModel = ViewModelProvider(requireActivity(), completeFactory).get(CompleteTaskViewModel::class.java)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_statistics, container, false)
+    ): View {
+        binding = FragmentStatisticsBinding.inflate(inflater, container, false)
+        pieChart = binding.pieChart
+        loadChartData(getAllDataFromDatabase())
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.btnMonth.setOnClickListener {
+            loadChartData(getMonthDataFromDatabase())
+        }
+        binding.btnYear.setOnClickListener {
+            loadChartData(getYearDataFromDatabase())
+        }
+        binding.btnAllTime.setOnClickListener {
+            loadChartData(getAllDataFromDatabase())
+        }
+    }
+
+    private fun loadChartData(data: List<Pair<String, Int>>){
+        val customColors = listOf(
+            Color.parseColor("#8689AC"), // Красный
+            Color.parseColor("#587099"), // Зеленый
+            Color.parseColor("#3F5576"), // Синий
+            Color.parseColor("#2F3148"), // Желтый
+        )
+
+
+
+        // Создаем список входных данных для PieChart
+        val entries = ArrayList<PieEntry>()
+        for((label, value) in data){
+            entries.add(PieEntry(value.toFloat(), label))
+        }
+
+        //Создаем набор данных и настраиваем диаграмму
+        val dataSet = PieDataSet(entries, "Statistics")
+        dataSet.colors = customColors
+        val pieData = PieData(dataSet)
+
+        pieChart.data = pieData
+        // Настройка визуала
+        pieChart.holeRadius = 25f
+        pieChart.transparentCircleRadius = 5f
+        pieChart.description.isEnabled = false
+        pieChart.legend.isEnabled = false
+        pieChart.animateY(600, Easing.EaseInOutQuad)
+        pieChart.setEntryLabelTextSize(15f)
+
+        pieChart.invalidate() // обновление диаграммы
+    }
+
+    private fun getAllDataFromDatabase(): List<Pair<String, Int>> {
+            val typeList: MutableList<Pair<String, Int>> = mutableListOf()
+            runBlocking {
+                val typeCounts = completeViewModel.getTypeCounts()
+                typeCounts.forEach{ typeCount ->
+                    typeList.add(Pair(typeCount.task_type, typeCount.count))
+                }
+            }
+        return typeList
+    }
+
+    private fun getMonthDataFromDatabase(): List<Pair<String, Int>> {
+        val typeList: MutableList<Pair<String, Int>> = mutableListOf()
+        runBlocking {
+            val month = LocalDate.now().month.value // получаем цифровое значение текущего месяца
+            val year = LocalDate.now().year
+            val typeCounts = completeViewModel.getTypeCountsForMonth(year, month)
+            typeCounts.forEach{ typeCount ->
+                typeList.add(Pair(typeCount.task_type, typeCount.count))
+            }
+        }
+        return typeList
+    }
+
+    private fun getYearDataFromDatabase(): List<Pair<String, Int>> {
+        val typeList: MutableList<Pair<String, Int>> = mutableListOf()
+        runBlocking {
+            val year = LocalDate.now().year
+            val typeCounts = completeViewModel.getTypeCountsForYear(year)
+            typeCounts.forEach{ typeCount ->
+                typeList.add(Pair(typeCount.task_type, typeCount.count))
+            }
+        }
+        return typeList
     }
 
     }

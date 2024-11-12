@@ -17,6 +17,9 @@ import com.example.todoapp.db.TaskDatabase
 import com.example.todoapp.db.TaskRecycleViewAdapter
 import com.example.todoapp.db.TaskViewModel
 import com.example.todoapp.db.TaskViewModelFactory
+import java.sql.Date
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -133,7 +136,8 @@ class TodoFragment : Fragment(), TaskInteractionListener {
                 CompleteTask(
                     selectedTask.id,
                     selectedTask.name,
-                    selectedTask.type
+                    selectedTask.type,
+                    LocalDate.now().toString()
                 )
             )
 
