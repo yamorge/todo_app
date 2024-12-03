@@ -39,6 +39,7 @@
             android:text="Task"
             android:textAlignment="viewStart"
             android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cbComplete"
             app:layout_constraintHorizontal_bias="0.0"

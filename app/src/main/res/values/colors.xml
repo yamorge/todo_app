@@ -3,10 +3,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#EFD0CA</color>
-    <color name="buttons">#88A795</color>
+    <color name="buttons">#9B59B6</color>
     <color name="text">#2B6A4A</color>
     <color name="light_blue_50">#FFE1F5FE</color>
     <color name="light_blue_200">#FF81D4FA</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
+    <color name="studying">#FF70A6</color>
+    <color name="hobbies">#FF9770</color>
+    <color name="sport">#FFD670</color>
+    <color name="social">#FFC107</color>
 </resources>

@@ -14,12 +14,10 @@ import com.example.todoapp.complete_db.CompleteTaskViewModel
 import com.example.todoapp.complete_db.CompleteTaskViewModelFactory
 import com.example.todoapp.db.Task
 import com.example.todoapp.db.TaskDatabase
-import com.example.todoapp.db.TaskRecycleViewAdapter
 import com.example.todoapp.db.TaskViewModel
 import com.example.todoapp.db.TaskViewModelFactory
-import java.sql.Date
+import kotlinx.coroutines.delay
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -101,7 +99,7 @@ class TodoFragment : Fragment(), TaskInteractionListener {
         val taskRV = binding.rvTasks
         taskRV.layoutManager = LinearLayoutManager(requireContext())
        // Вызывается каждый раз при клике и обновляется соответственно в displayTaskList
-        adapter = TaskRecycleViewAdapter(this){ // передаем слушатель интерфейса и кликлистенер
+        adapter = TaskRecycleViewAdapter(this){ // передаем слушатель интерфейса и кликлисенер
             selectedItem: Task -> listItemClicked(selectedItem)
         }
         taskRV.adapter = adapter
@@ -112,7 +110,7 @@ class TodoFragment : Fragment(), TaskInteractionListener {
     private fun displayTasksList(){
         viewModel.tasks.observe(requireActivity(), { tasks ->
             adapter.setList(tasks)
-            adapter.notifyDataSetChanged() // заменить после теста!
+            adapter.notifyDataSetChanged()
         })
     }
 
@@ -125,8 +123,8 @@ class TodoFragment : Fragment(), TaskInteractionListener {
    override fun unfocus(){
         adapter.selectedTask = null
         isListItemClicked = false
-       adapter.notifyDataSetChanged() // поменять после теста!
-       binding.btnAddTask.text = getString(R.string.add_task) // Меняем кнопку назад, всякий раз, когда не выбрана задача
+        adapter.notifyDataSetChanged()
+        binding.btnAddTask.text = getString(R.string.add_task) // Меняем кнопку назад, всякий раз, когда не выбрана задача
 
    }
 
@@ -149,7 +147,7 @@ class TodoFragment : Fragment(), TaskInteractionListener {
                 )
             )
             unfocus()
-            adapter.notifyDataSetChanged()
+
         }
     }
 

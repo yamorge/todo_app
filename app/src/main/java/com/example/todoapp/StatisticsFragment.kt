@@ -1,6 +1,7 @@
 package com.example.todoapp
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,11 +19,13 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.text.NumberFormat
 import java.time.LocalDate
 
 // TODO: Rename parameter arguments, choose names that match
@@ -75,10 +78,10 @@ class StatisticsFragment : Fragment() {
 
     private fun loadChartData(data: List<Pair<String, Int>>){
         val customColors = listOf(
-            Color.parseColor("#8689AC"), // Красный
-            Color.parseColor("#587099"), // Зеленый
-            Color.parseColor("#3F5576"), // Синий
-            Color.parseColor("#2F3148"), // Желтый
+            resources.getColor(R.color.studying),
+            resources.getColor(R.color.hobbies),
+            resources.getColor(R.color.sport),
+            resources.getColor(R.color.social)
         )
 
 
@@ -92,6 +95,17 @@ class StatisticsFragment : Fragment() {
         //Создаем набор данных и настраиваем диаграмму
         val dataSet = PieDataSet(entries, "Statistics")
         dataSet.colors = customColors
+        dataSet.valueTextSize = 20f
+        dataSet.setSliceSpace(6f)
+        dataSet.valueTypeface = resources.getFont(R.font.moderustic_semibold)
+
+        // Форматируем числовые значения
+        dataSet.valueFormatter = object : ValueFormatter() {
+            override fun getPieLabel(value: Float, entry: PieEntry): String {
+                return NumberFormat.getInstance().format(value.toInt()) // Форматируем как целое число
+            }
+        }
+
         val pieData = PieData(dataSet)
 
         pieChart.data = pieData
@@ -102,7 +116,7 @@ class StatisticsFragment : Fragment() {
         pieChart.legend.isEnabled = false
         pieChart.animateY(600, Easing.EaseInOutQuad)
         pieChart.setEntryLabelTextSize(15f)
-
+        pieChart.setEntryLabelTypeface(resources.getFont(R.font.moderustic_bold))
         pieChart.invalidate() // обновление диаграммы
     }
 

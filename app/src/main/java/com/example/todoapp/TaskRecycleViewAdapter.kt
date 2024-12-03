@@ -1,19 +1,25 @@
-package com.example.todoapp.db
+package com.example.todoapp
 
+import android.app.PendingIntent.getActivity
 import android.graphics.Color
+import android.graphics.Paint
+import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todoapp.R
-import com.example.todoapp.TaskInteractionListener
-import com.example.todoapp.TodoFragment
 import com.example.todoapp.db.Task
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 class TaskRecycleViewAdapter(
     private val listener: TaskInteractionListener,
@@ -58,36 +64,32 @@ class TaskRecycleViewAdapter(
             else if(selectedTask == null) {
                 selectedTask = task
                 clickListener(task)
-                notifyItemChanged(position) // работает ли ?
+                notifyItemChanged(position)
             }
         }
 
         checkBox.setOnClickListener(null) // сбрасываем предыдущий
 
-        checkBox.setOnClickListener {  // Здесь добавляется анимация при выполнении чекбокса и вызывается функция из фрагмента (при помощи интерфейса)
-            selectedTask = task // нужно для того, чтобы фокус переходил на задачу с чекбоксом
-            holder.itemView.animate()
-                .alpha(0f)
-                .setDuration(300)
-                .withEndAction {
-                    listener.completeTask(selectedTask)
-                }
-                .start()
+        checkBox.setOnClickListener {
+
+                listener.completeTask(task)
+                checkBox.isChecked = false
+
         }
 
         // Когда меняем цвет, мы используем setCardBackgroundColor, потому что только так можно сохранить закругление углов
 
         if (task.type == "social"){
-            cardView.setCardBackgroundColor(Color.parseColor("#8689AC"))
+            cardView.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.social))
         }
         else if(task.type == "sport"){
-            cardView.setCardBackgroundColor(Color.parseColor("#587099"))
+            cardView.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.sport))
         }
         else if(task.type == "studying"){
-            cardView.setCardBackgroundColor(Color.parseColor("#3F5576"))
+            cardView.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.studying))
         }
         else{
-            cardView.setCardBackgroundColor(Color.parseColor("#2F3148"))
+            cardView.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.hobbies))
         }
 
         if (task == selectedTask) { // Поменять потом

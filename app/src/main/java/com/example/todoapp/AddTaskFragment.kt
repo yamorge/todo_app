@@ -11,10 +11,8 @@ import com.example.todoapp.complete_db.CompleteTaskDatabase
 import com.example.todoapp.complete_db.CompleteTaskViewModel
 import com.example.todoapp.complete_db.CompleteTaskViewModelFactory
 import com.example.todoapp.databinding.FragmentAddTaskBinding
-import com.example.todoapp.databinding.FragmentTodoBinding
 import com.example.todoapp.db.Task
 import com.example.todoapp.db.TaskDatabase
-import com.example.todoapp.db.TaskRecycleViewAdapter
 import com.example.todoapp.db.TaskViewModel
 import com.example.todoapp.db.TaskViewModelFactory
 

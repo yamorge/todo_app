@@ -55,6 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/studying"
+                    android:textColorLink="@color/buttons"
                     android:textSize="20sp" />
 
                 <RadioButton
@@ -98,6 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/buttons"
+                android:fontFamily="@font/moderustic_bold"
                 android:text="@string/submit"
                 android:textSize="24sp"
                 app:cornerRadius="10sp"
@@ -114,6 +116,7 @@
         android:id="@+id/tvAddTaskHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/moderustic_bold"
         android:text="@string/customize_your_task"
         android:textSize="34sp"
         android:textStyle="bold"

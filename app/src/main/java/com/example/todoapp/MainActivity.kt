@@ -39,10 +39,10 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(TodoFragment())
                     true
                 }
-                R.id.everyday_tasks -> {
-                    replaceFragment(EverydayFragment())
-                    true
-                }
+//                R.id.everyday_tasks -> {
+//                    replaceFragment(EverydayFragment())
+//                    true
+//                }
                 R.id.statistics -> {
                     replaceFragment(StatisticsFragment())
                     true
